@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pearly: #fdfcfb;
+  --color-ashen: #1c1c1c;
+  --color-charcoal: #121212;
+  --color-natural-bg: #f3f0ea;
+  --color-natural-paper: #fdfbf7;
+  --color-natural-header: #f9f8f6;
+  --color-natural-text: #3d3a33;
+  --color-natural-accent: #5a5448;
+  --color-natural-border: #e5e1d8;
+  --font-serif: "Cormorant Garamond", "Playfair Display", serif;
+}
+
+@layer base {
+  html, body {
+    @apply overflow-x-hidden overflow-y-auto h-full w-full;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  :root {
+    --bg-desk: #f3f0ea;
+    --bg-page: #fdfbf7;
+    --bg-header: #ecead9;
+    --text-main: #2c2924;
+    --text-accent: #6b665c;
+    --text-muted: #948f85;
+    --line-color: #e5e1d8;
+    --line-height: 32px;
+    --border-color: #d1cdc0;
+  }
+
+  .dark {
+    --bg-desk: #181818;
+    --bg-page: #222222;
+    --bg-header: #121212;
+    --text-main: #d4d4d4;
+    --text-accent: #a3a3a3;
+    --text-muted: #6b6b6b;
+    --line-color: rgba(255, 255, 255, 0.05);
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    @apply bg-[var(--bg-desk)] text-[var(--text-main)] transition-colors duration-300;
+    font-family: var(--font-serif);
+    --line-height: 32px;
+    --baseline-offset: 33px;
+    --top-margin: 80px;
+  }
+}
+
+@layer components {
+  .parchment-texture {
+    background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+    background-repeat: repeat;
+  }
+
+  .book-fiber {
+    background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+    background-repeat: repeat;
+  }
+
+  .writing-lines {
+    background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+    background-size: 100% var(--line-height);
+    background-position: 0 0;
+    line-height: var(--line-height);
+  }
+
+  .vertical-margin {
+    @apply absolute left-[60px] top-0 bottom-0 w-[1px] bg-red-200/50 dark:bg-red-900/30;
+  }
+}
