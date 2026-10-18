@@ -15,7 +15,8 @@
     "android:init": "tauri android init",
     "android:build": "tauri android build --apk",
     "ios:init": "tauri ios init",
-    "ios:build": "tauri ios build"
+    "ios:build": "tauri ios build",
+    "start": "node --import tsx server.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
