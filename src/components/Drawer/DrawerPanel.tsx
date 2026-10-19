@@ -72,11 +72,11 @@ export const DrawerPanel: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       aria-hidden={!isOpen}
       className="fixed top-8 left-0 right-0 h-80 bg-[var(--bg-header)] border-b border-[var(--border-color)] shadow-[0_10px_30px_rgba(0,0,0,0.05)] px-5 md:px-10 py-5 z-[40] overflow-y-auto">
-      <div className="w-max max-w-none mx-auto flex flex-row items-start justify-center gap-6 md:gap-12">
+      <div className="w-max max-w-none mx-auto flex flex-row items-center justify-center gap-6 md:gap-12">
         {LAYOUT_GROUPS.map(([heading, layouts]) => (
-          <section key={heading} className="w-[180px] md:w-[220px] shrink-0">
-            <h3 className="text-[10px] uppercase tracking-widest font-bold text-[var(--text-muted)] mb-3 sticky top-0 bg-[var(--bg-header)] py-1">{heading}</h3>
-            <div className="flex flex-col gap-2">
+          <section key={heading} className="w-[180px] md:w-[220px] shrink-0 flex flex-col items-center">
+            <h3 className="text-[10px] uppercase tracking-widest font-bold text-[var(--text-muted)] mb-3 text-center bg-[var(--bg-header)] py-1">{heading}</h3>
+            <div className="flex flex-col gap-2 w-max max-w-full">
               {layouts.map(name => (
                 <label key={name} className="flex items-start gap-2 cursor-pointer text-[11px] md:text-xs text-[var(--text-accent)]">
                   <input type="checkbox" checked={selectedLayouts.includes(name)} onChange={() => toggleLayout(name)}
