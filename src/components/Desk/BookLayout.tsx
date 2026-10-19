@@ -12,7 +12,6 @@ const displayName = (name: string) => name === 'Acknowledgments (Back)' ? 'Ackno
 
 function LayoutPage({ name }: { name: string }) {
   const centered = /^(Half Title Page|Series Page|Frontispiece|Title Page|Dedication|Epigraph|Part Title Page|Chapter Title Page|Illustration Page|Map)$/.test(name);
-  const reference = /^(Table of Contents|List of Illustrations|Glossary|Index|References|Bibliography|Endnotes)$/.test(name);
   const illustration = name === 'Frontispiece' || name === 'Illustration Page' || name === 'Map';
   const keyPrefix = 'layout:' + name + ':';
 
@@ -29,13 +28,14 @@ function LayoutPage({ name }: { name: string }) {
           />
         </div>
       )}
-      <BookField
-        fieldKey={keyPrefix + 'heading'}
-        fallback={displayName(name)}
-        ariaLabel={displayName(name) + ' heading'}
-        className={'w-full font-semibold leading-tight break-words ' + (centered ? 'text-center text-2xl md:text-3xl tracking-wide' : 'text-left text-xl md:text-2xl')}
-      />
-      {reference && <div className="mt-7 w-full border-t border-[var(--border-color)] opacity-60"/>}
+      <div className={centered ? 'w-full' : 'calli-book-layout-heading'}>
+        <BookField
+          fieldKey={keyPrefix + 'heading'}
+          fallback={displayName(name)}
+          ariaLabel={displayName(name) + ' heading'}
+          className={'w-full font-semibold leading-tight break-words ' + (centered ? 'text-center text-2xl md:text-3xl tracking-wide' : 'text-left text-xl md:text-2xl')}
+        />
+      </div>
       {name === 'Family Tree' && (
         <div className="w-full flex justify-center mt-7">
           <div className="border border-[var(--border-color)] px-4 py-3 w-[80%]">
