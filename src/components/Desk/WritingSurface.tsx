@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { usePage } from '../../hooks/usePage';
 import { useFileStore } from '../../hooks/useFileStore';
+import { getManuscriptText, withManuscriptText } from '../../lib/bookDocument';
 
 const PAGE_DELIMITER = '\f';
 const COL_DELIMITER = '|||';
@@ -15,7 +16,7 @@ export const WritingSurface: React.FC = () => {
   const rightRef = useRef<HTMLTextAreaElement>(null);
 
   const activeFile = activeFileId ? items[activeFileId] : null;
-  const content = activeFile?.content || '';
+  const content = getManuscriptText(activeFile?.content || '');
 
   const currentFontSize = fontSizeOverride ? `${fontSizeOverride}px` : format.fontSize;
 
@@ -23,7 +24,7 @@ export const WritingSurface: React.FC = () => {
   const performFullRedistribution = () => {
     if (!activeFileId) return;
     const isDual = format.id === 'dual_notebook';
-    const currentFullContent = items[activeFileId]?.content || '';
+    const currentFullContent = getManuscriptText(items[activeFileId]?.content || '');
     const allPages = currentFullContent.split(PAGE_DELIMITER);
     
     // We need a test element to simulate dimensions
@@ -139,7 +140,7 @@ export const WritingSurface: React.FC = () => {
     }
 
     document.body.removeChild(testEl);
-    updateFileContent(activeFileId, newPages.join(PAGE_DELIMITER));
+    updateFileContent(activeFileId, withManuscriptText(items[activeFileId]?.content || '', newPages.join(PAGE_DELIMITER)));
   };
 
   // Trigger redistribution on font size change
@@ -162,7 +163,7 @@ export const WritingSurface: React.FC = () => {
     if (!activeFileId) return;
 
     // Get the latest content from the store/items to avoid stale closure issues
-    const currentFullContent = items[activeFileId]?.content || '';
+    const currentFullContent = getManuscriptText(items[activeFileId]?.content || '');
     const allPages = currentFullContent.split(PAGE_DELIMITER);
     
     // Ensure the array is long enough
@@ -184,7 +185,7 @@ export const WritingSurface: React.FC = () => {
     const targetRef = isDual ? (side === 'left' ? leftRef : rightRef) : textareaRef;
     const el = targetRef.current;
     if (!el) {
-      updateFileContent(activeFileId, allPages.join(PAGE_DELIMITER));
+      updateFileContent(activeFileId, withManuscriptText(items[activeFileId]?.content || '', allPages.join(PAGE_DELIMITER)));
       return;
     }
 
@@ -285,7 +286,7 @@ export const WritingSurface: React.FC = () => {
     }
 
     document.body.removeChild(testEl);
-    updateFileContent(activeFileId, allPages.join(PAGE_DELIMITER));
+    updateFileContent(activeFileId, withManuscriptText(items[activeFileId]?.content || '', allPages.join(PAGE_DELIMITER)));
   };
 
   if (format.id === 'dual_notebook') {
