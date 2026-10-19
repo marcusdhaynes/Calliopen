@@ -347,8 +347,11 @@ export const BookLayout: React.FC = () => {
           </motion.div>
           <motion.div className="calli-book-cover-leaf"
             initial={false}
-            animate={{rotateY: isBack ? 0 : 179, opacity: isBack ? 1 : 0}}
-            transition={{rotateY:{duration:.8,ease:[.22,.61,.36,1]},opacity:{duration:0,delay:isBack?0:.8}}}
+            animate={{rotateY: 0, opacity: isBack ? 1 : 0}}
+            // The back cover is an outer board, not a paper leaf. Never rotate its
+            // blue exterior through the open pages: it exposes the wrong face.
+            // The ivory left-hand page is already rendered underneath.
+            transition={{opacity:{duration:.18,ease:'easeInOut'}}}
             style={{...placement(left, top + 1, pageWidth, pageHeight + 4), transformOrigin:'right center', pointerEvents: isBack ? 'auto' : 'none'}}
             aria-hidden={!isBack}>
             <BookCoverFace title={title} hardcover={hardcover} back/>
