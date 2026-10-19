@@ -4,6 +4,7 @@ import { useFileStore } from '../../hooks/useFileStore';
 import './BookLayout.css';
 import { usePage } from '../../hooks/usePage';
 import { WritingSurface } from './WritingSurface';
+import { BookField } from './BookField';
 import { LAYOUT_GROUPS } from '../Drawer/DrawerPanel';
 
 const ALL_LAYOUTS = LAYOUT_GROUPS.flatMap(([, layouts]) => layouts);
@@ -12,16 +13,72 @@ const displayName = (name: string) => name === 'Acknowledgments (Back)' ? 'Ackno
 function LayoutPage({ name }: { name: string }) {
   const centered = /^(Half Title Page|Series Page|Frontispiece|Title Page|Dedication|Epigraph|Part Title Page|Chapter Title Page|Illustration Page|Map)$/.test(name);
   const reference = /^(Table of Contents|List of Illustrations|Glossary|Index|References|Bibliography|Endnotes)$/.test(name);
-  return <div className={`relative z-10 w-full h-full px-[12%] py-[14%] flex flex-col font-serif text-[var(--text-main)] ${centered ? 'justify-center items-center text-center' : 'items-start'}`}>
-    {name === 'Frontispiece' || name === 'Illustration Page' || name === 'Map' ?
-      <div className="w-full aspect-[4/3] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-muted)] italic text-sm mb-7">Image Placement</div> : null}
-    <h1 className={`max-w-full break-words ${centered ? 'text-2xl md:text-3xl tracking-wide' : 'text-xl md:text-2xl'} font-semibold leading-tight`}>{displayName(name)}</h1>
-    {name === 'Copyright Page' && <p className="mt-auto text-xs opacity-60">© Copyright · All rights reserved.</p>}
-    {reference && <div className="mt-8 w-full border-t border-[var(--border-color)] opacity-50" />}
-    {name === 'Family Tree' && <div className="mt-10 w-full flex justify-center"><div className="border border-[var(--border-color)] rounded px-6 py-3 text-sm opacity-50">Family Tree</div></div>}
-  </div>;
-}
+  const illustration = name === 'Frontispiece' || name === 'Illustration Page' || name === 'Map';
+  const keyPrefix = 'layout:' + name + ':';
 
+  return (
+    <section className={'relative z-10 w-full h-full px-[11%] py-[10%] flex flex-col font-serif text-[var(--text-main)] ' + (centered ? 'items-center text-center' : 'items-start')}>
+      {centered && <div className="flex-1 min-h-[2%]" aria-hidden="true"/>}
+      {illustration && (
+        <div className="w-full aspect-[4/3] border border-[var(--border-color)]/70 flex items-center justify-center mb-6">
+          <BookField
+            fieldKey={keyPrefix + 'imageCaption'}
+            fallback="Image Placement"
+            ariaLabel={displayName(name) + ' image placeholder'}
+            className="w-full px-3 text-center italic text-sm text-[var(--text-muted)]"
+          />
+        </div>
+      )}
+      <BookField
+        fieldKey={keyPrefix + 'heading'}
+        fallback={displayName(name)}
+        ariaLabel={displayName(name) + ' heading'}
+        className={'w-full font-semibold leading-tight break-words ' + (centered ? 'text-center text-2xl md:text-3xl tracking-wide' : 'text-left text-xl md:text-2xl')}
+      />
+      {reference && <div className="mt-7 w-full border-t border-[var(--border-color)] opacity-60"/>}
+      {name === 'Family Tree' && (
+        <div className="w-full flex justify-center mt-7">
+          <div className="border border-[var(--border-color)] px-4 py-3 w-[80%]">
+            <BookField
+              fieldKey={keyPrefix + 'diagram'}
+              fallback="Family Tree"
+              ariaLabel="Family tree diagram label"
+              className="w-full text-center text-sm text-[var(--text-muted)]"
+            />
+          </div>
+        </div>
+      )}
+      {centered ? (
+        <BookField
+          fieldKey={keyPrefix + 'body'}
+          ariaLabel={displayName(name) + ' page text'}
+          placeholder="Click to add text…"
+          rows={3}
+          className="w-full mt-6 text-center text-sm md:text-base leading-relaxed max-h-[45%]"
+        />
+      ) : (
+        <div className="flex-1 w-full min-h-0 mt-5">
+          <BookField
+            fieldKey={keyPrefix + 'body'}
+            ariaLabel={displayName(name) + ' page text'}
+            placeholder="Click to write…"
+            fill
+            className="w-full h-full text-left text-sm md:text-base leading-relaxed"
+          />
+        </div>
+      )}
+      {name === 'Copyright Page' && (
+        <BookField
+          fieldKey={keyPrefix + 'copyright'}
+          fallback="© Copyright · All rights reserved."
+          ariaLabel="Copyright notice"
+          className="w-full mt-auto pt-5 text-left text-xs opacity-65"
+        />
+      )}
+      {centered && <div className="flex-1 min-h-[2%]" aria-hidden="true"/>}
+    </section>
+  );
+}
 
 type PaperSide = 'left' | 'right';
 
@@ -121,16 +178,30 @@ function BookCoverFace({ back, title, hardcover }: { back: boolean; title: strin
       <div className="calli-book-cover-hinge" aria-hidden="true"/>
       {back ? (
         <div className="relative z-10 flex flex-col items-center justify-between h-full px-[12%] py-[15%] text-center">
-          <div className="calli-book-foil text-[10px] uppercase tracking-[.27em]">About This Book</div>
+          <BookField
+            fieldKey="cover:back:heading"
+            fallback="About This Book"
+            ariaLabel="Back cover heading"
+            className="calli-book-foil w-full text-center text-[10px] uppercase tracking-[.27em]"
+          />
           <div className="w-full flex flex-col items-center gap-5">
             <div className="w-14 h-px bg-[#ddbd84]/70"/>
-            <p className="font-serif italic leading-relaxed text-base sm:text-lg text-[#f2e8d7]/85">
-              Every story begins with a blank page.
-            </p>
+            <BookField
+              fieldKey="cover:back:description"
+              fallback="Every story begins with a blank page."
+              ariaLabel="Back cover description"
+              rows={3}
+              className="w-full font-serif italic leading-relaxed text-center text-base sm:text-lg text-[#f2e8d7]/85 max-h-[260px]"
+            />
             <div className="w-14 h-px bg-[#ddbd84]/70"/>
           </div>
           <div className="flex flex-col items-center gap-4">
-            <span className="calli-book-foil text-[10px] uppercase tracking-[.25em]">Calliopen</span>
+            <BookField
+              fieldKey="cover:back:imprint"
+              fallback="Calliopen"
+              ariaLabel="Back cover imprint"
+              className="calli-book-foil w-full text-center text-[10px] uppercase tracking-[.25em]"
+            />
             <div className="h-9 w-24 rounded-sm bg-[#e9e4d7] p-1 flex items-center justify-around gap-[2px]" aria-label="Decorative barcode placeholder">
               {[2,1,3,1,2,3,1,1,3,2,1,3,1,2,2,1,3,1].map((n,i) =>
                 <span key={i} className="bg-[#252525] h-full" style={{width:n}}/>
@@ -140,14 +211,30 @@ function BookCoverFace({ back, title, hardcover }: { back: boolean; title: strin
         </div>
       ) : (
         <div className="relative z-10 flex flex-col items-center justify-between h-full px-[11%] py-[12%] text-center">
-          <div className="calli-book-foil text-[10px] uppercase tracking-[.3em]">Calliopen Edition</div>
+          <BookField
+            fieldKey="cover:front:edition"
+            fallback="Calliopen Edition"
+            ariaLabel="Front cover edition"
+            className="calli-book-foil w-full text-center text-[10px] uppercase tracking-[.3em]"
+          />
           <div className="w-full flex flex-col items-center gap-2">
             <CoverOrnament/>
             <div className="h-px w-16 bg-[#ddbd84]/75 my-2"/>
-            <h1 className="font-serif font-semibold leading-[1.05] tracking-[.025em] text-[clamp(22px,2.4vw,37px)] break-words max-w-full" style={{textShadow:'0 2px 7px #0009'}}>{title}</h1>
+            <BookField
+              fieldKey="cover:front:title"
+              fallback={title}
+              ariaLabel="Front cover book title"
+              rows={2}
+              className="w-full font-serif font-semibold leading-[1.05] tracking-[.025em] text-center text-[clamp(22px,2.4vw,37px)] break-words max-h-[240px]"
+            />
             <div className="h-px w-16 bg-[#ddbd84]/75 my-2"/>
           </div>
-          <div className="calli-book-foil text-[10px] uppercase tracking-[.24em]">A Work In Progress</div>
+          <BookField
+            fieldKey="cover:front:subtitle"
+            fallback="A Work In Progress"
+            ariaLabel="Front cover subtitle"
+            className="calli-book-foil w-full text-center text-[10px] uppercase tracking-[.24em]"
+          />
         </div>
       )}
     </div>
@@ -242,7 +329,7 @@ export const BookLayout: React.FC = () => {
             {active ? <LayoutPage name={active}/> : null}
           </BookPaper>
           <BookPaper side="right" visible={isInside || isFront} interactive={isInside} style={placement(right)}>
-            {isInside && !active ? <WritingSurface/> : null}
+            {isInside ? <WritingSurface/> : null}
           </BookPaper>
           <div className="calli-book-seam" style={{ left: left + pageWidth - 8, top: top + 20, height: pageHeight - 39 }} aria-hidden="true"/>
           {(isFront || isBack) && (
@@ -253,7 +340,7 @@ export const BookLayout: React.FC = () => {
             initial={false}
             animate={{rotateY: isFront ? 0 : -179, opacity: isFront ? 1 : 0}}
             transition={{rotateY:{duration:.8,ease:[.22,.61,.36,1]},opacity:{duration:0,delay:isFront?0:.8}}}
-            style={{...placement(right, top + 1, pageWidth, pageHeight + 4), transformOrigin:'left center'}}
+            style={{...placement(right, top + 1, pageWidth, pageHeight + 4), transformOrigin:'left center', pointerEvents: isFront ? 'auto' : 'none'}}
             aria-hidden={!isFront}>
             <BookCoverFace title={title} hardcover={hardcover} back={false}/>
             <div className="calli-book-cover-lining" aria-hidden="true"/>
@@ -262,7 +349,7 @@ export const BookLayout: React.FC = () => {
             initial={false}
             animate={{rotateY: isBack ? 0 : 179, opacity: isBack ? 1 : 0}}
             transition={{rotateY:{duration:.8,ease:[.22,.61,.36,1]},opacity:{duration:0,delay:isBack?0:.8}}}
-            style={{...placement(left, top + 1, pageWidth, pageHeight + 4), transformOrigin:'right center'}}
+            style={{...placement(left, top + 1, pageWidth, pageHeight + 4), transformOrigin:'right center', pointerEvents: isBack ? 'auto' : 'none'}}
             aria-hidden={!isBack}>
             <BookCoverFace title={title} hardcover={hardcover} back/>
             <div className="calli-book-cover-lining calli-book-cover-lining--back" aria-hidden="true"/>
