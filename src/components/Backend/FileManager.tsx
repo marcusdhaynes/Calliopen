@@ -42,7 +42,7 @@ export const FileManager: React.FC<FileManagerProps> = ({
   onLogin
 }) => {
   const { user, clearAccessToken } = useAuth();
-  const { items, setItems, rootIds, setRootIds } = useFileStore();
+  const { items, setItems, rootIds, setRootIds, preferredDriveFolder, activeFileId } = useFileStore();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [conflict, setConflict] = useState<Conflict | null>(null);
   const originalParentId = useRef<string | null>(null);
@@ -75,7 +75,9 @@ export const FileManager: React.FC<FileManagerProps> = ({
     
     try {
       const parentId = item.parentId;
-      const parentDriveId = parentId ? updatedRecord[parentId]?.driveId : currentCalliopenId;
+      const parentDriveId = item.type === 'file' && preferredDriveFolder
+        ? preferredDriveFolder.id
+        : (parentId ? updatedRecord[parentId]?.driveId : currentCalliopenId);
       
       if (!parentDriveId) return currentItems;
 
