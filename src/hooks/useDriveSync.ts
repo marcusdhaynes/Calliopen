@@ -4,7 +4,7 @@ import { useGoogleDrive } from './useGoogleDrive';
 import { FileItem } from '../components/Backend/types';
 
 export function useDriveSync(accessToken: string | null, onAuthError?: () => void) {
-  const { items, setItems, setRootIds } = useFileStore();
+  const { items, setItems, setRootIds, activeFileId, preferredDriveFolder, profileReady } = useFileStore();
   const { findOrCreateFolder, listItems, getFileContent, syncFile, updateItemParent } = useGoogleDrive(accessToken);
   const [calliopenId, setCalliopenId] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -29,7 +29,7 @@ export function useDriveSync(accessToken: string | null, onAuthError?: () => voi
   }, [onAuthError]);
 
   const initSync = useCallback(async () => {
-    if (!accessToken) return;
+    if (!accessToken || !profileReady) return;
     
     setIsSyncing(true);
     setConflicts([]);
@@ -82,7 +82,9 @@ export function useDriveSync(accessToken: string | null, onAuthError?: () => voi
           const canSync = !item.parentId || updatedItems[item.parentId].driveId;
           
           if (!item.driveId && canSync) {
-            const parentDriveId = item.parentId ? updatedItems[item.parentId].driveId : folderId;
+            const parentDriveId = item.type === 'file' && id === activeFileId && preferredDriveFolder
+              ? preferredDriveFolder.id
+              : (item.parentId ? updatedItems[item.parentId].driveId : folderId);
             const driveName = item.type === 'file' ? `${item.name}.txt` : item.name;
             if (item.type === 'file') {
               const data = await syncFile(driveName, item.content || '', parentDriveId!, item.driveId);
@@ -109,7 +111,7 @@ export function useDriveSync(accessToken: string | null, onAuthError?: () => voi
     } finally {
       setIsSyncing(false);
     }
-  }, [accessToken, findOrCreateFolder, listItems, setItems, syncFile, getFileContent, handleSyncError]);
+  }, [accessToken, profileReady, activeFileId, preferredDriveFolder?.id, findOrCreateFolder, listItems, setItems, syncFile, getFileContent, handleSyncError]);
 
   // Sync from Drive (Poll)
   const syncFromDrive = useCallback(async () => {
@@ -143,7 +145,7 @@ export function useDriveSync(accessToken: string | null, onAuthError?: () => voi
 
   // Initial Sync and Polling Setup
   useEffect(() => {
-    if (!accessToken) {
+    if (!accessToken || !profileReady) {
       setError(null);
       return;
     }
@@ -159,12 +161,12 @@ export function useDriveSync(accessToken: string | null, onAuthError?: () => voi
     return () => {
       if (pollingInterval.current) clearInterval(pollingInterval.current);
     };
-  }, [accessToken, calliopenId, initSync, syncFromDrive]);
+  }, [accessToken, profileReady, calliopenId, initSync, syncFromDrive]);
 
   // Watch for local changes and sync to Drive
   const lastDebouncedItems = useRef(items);
   useEffect(() => {
-    if (!accessToken || !calliopenId || !isInitialSyncDone.current) return;
+    if (!accessToken || !profileReady || !calliopenId || !isInitialSyncDone.current) return;
 
     const timer = setTimeout(async () => {
       try {
@@ -173,7 +175,8 @@ export function useDriveSync(accessToken: string | null, onAuthError?: () => voi
           const lastItem = lastDebouncedItems.current[id];
           
           if (item.type === 'file' && item.driveId && (item.content !== lastItem?.content || item.name !== lastItem?.name)) {
-            const parentDriveId = item.parentId ? items[item.parentId].driveId : calliopenId;
+            const parentDriveId = id === activeFileId && preferredDriveFolder
+              ? preferredDriveFolder.id : (item.parentId ? items[item.parentId].driveId : calliopenId);
             const driveName = `${item.name}.txt`;
             if (parentDriveId) {
               await syncFile(driveName, item.content || '', parentDriveId, item.driveId);
@@ -187,7 +190,7 @@ export function useDriveSync(accessToken: string | null, onAuthError?: () => voi
     }, 2000); // Debounce sync to Drive
 
     return () => clearTimeout(timer);
-  }, [items, accessToken, calliopenId, syncFile]);
+  }, [items, accessToken, profileReady, activeFileId, preferredDriveFolder?.id, calliopenId, syncFile]);
 
   const reSync = useCallback(() => {
     isInitialSyncDone.current = false;
