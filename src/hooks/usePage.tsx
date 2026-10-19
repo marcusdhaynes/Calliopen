@@ -31,9 +31,9 @@ export const PageProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const raw = activeFileId ? items[activeFileId]?.content || '' : '';
   const saved = getBookSettings(raw);
-  const formatType = (PAGE_FORMATS.some(f => f.id === saved.format) ? saved.format : fallbackFormat) as PageFormatType;
-  const selectedLayouts = saved.selectedLayouts ?? fallbackLayouts;
-  const fontSizeOverride = saved.fontSizeOverride !== undefined ? saved.fontSizeOverride : fallbackFont;
+  const formatType = (PAGE_FORMATS.some(f => f.id === saved.format) ? saved.format : (activeFileId ? 'notebook' : fallbackFormat)) as PageFormatType;
+  const selectedLayouts = saved.selectedLayouts ?? (activeFileId ? [] : fallbackLayouts);
+  const fontSizeOverride = saved.fontSizeOverride !== undefined ? saved.fontSizeOverride : (activeFileId ? null : fallbackFont);
   const format = PAGE_FORMATS.find(f => f.id === formatType) || PAGE_FORMATS[0];
 
   const saveSettings = (changes: Partial<SavedBookSettings>) => {
