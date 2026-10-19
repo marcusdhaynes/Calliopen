@@ -1,0 +1,221 @@
+
+/* Physical-book presentation. Scoped so notebook and editor styles stay unchanged. */
+.calli-book-viewport {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 12px 0 32px;
+  scrollbar-width: thin;
+}
+.calli-book-stage {
+  position: relative;
+  flex: none;
+  margin: 0 auto;
+  isolation: isolate;
+  perspective: 1900px;
+}
+.calli-book-shadow {
+  position: absolute;
+  z-index: -1;
+  bottom: 5px;
+  left: 9%;
+  width: 82%;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .38);
+  filter: blur(21px);
+  pointer-events: none;
+}
+.calli-book-board {
+  position: absolute;
+  border-radius: 7px 5px 6px 5px;
+  background:
+    repeating-linear-gradient(94deg, transparent 0 2px, rgba(255,255,255,.022) 3px 4px),
+    linear-gradient(145deg, var(--cover-light), var(--cover-base) 49%, var(--cover-deep));
+  border: 3px solid var(--cover-edge);
+  box-shadow:
+    0 2px 0 #b18c61,
+    0 5px 0 var(--cover-deep),
+    0 14px 24px rgba(0,0,0,.27),
+    inset 0 0 0 1px rgba(220,181,123,.24);
+}
+.calli-book-board--soft { border-width: 1px; border-radius: 3px; }
+.calli-book-board::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(213,172,111,.27);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.calli-book-page {
+  position: absolute;
+  overflow: visible;
+  color: #30271e;
+  --text-main: #30271e;
+  --text-muted: #837564;
+  --border-color: #c5b59b;
+  --bg-page: #f8f1e1;
+  transition: opacity .3s ease;
+}
+.calli-book-sheet-stack {
+  position: absolute;
+  inset: 7px 3px 4px;
+  z-index: 0;
+  border-radius: 5px 5px 4px 4px;
+  background: repeating-linear-gradient(to bottom, #c3b49b 0px, #e8dcc8 1px, #f9f0de 2px, #c9bba4 3px);
+  box-shadow: 0 6px 5px rgba(48,34,20,.24);
+}
+.calli-book-sheet-stack--left {
+  transform: translate(-5px, 7px);
+  box-shadow: -7px 8px 12px rgba(48,34,20,.3);
+}
+.calli-book-sheet-stack--right {
+  transform: translate(5px, 7px);
+  box-shadow: 7px 8px 12px rgba(48,34,20,.3);
+}
+.calli-book-page-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 1px rgba(79,63,42,.16));
+  pointer-events: none;
+}
+.calli-book-page-content {
+  position: absolute;
+  z-index: 3;
+  top: 6.2%;
+  bottom: 6.5%;
+  left: 3.5%;
+  right: 3.5%;
+  overflow: hidden;
+}
+.calli-book-page-content textarea {
+  color: #30271e;
+  caret-color: #6e4838;
+}
+.calli-book-page-content textarea::placeholder { color: #968777; }
+.calli-book-page--left .calli-book-page-content { padding-right: 1%; }
+.calli-book-page--right .calli-book-page-content { padding-left: 1%; }
+.calli-book-paper-edge {
+  position: absolute;
+  z-index: 2;
+  top: 5.6%;
+  bottom: 5.9%;
+  width: 6px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #ac987b, #eadfca 55%, transparent);
+  opacity: .75;
+  pointer-events: none;
+}
+.calli-book-page--left .calli-book-paper-edge { left: 0; }
+.calli-book-page--right .calli-book-paper-edge {
+  right: 0;
+  transform: scaleX(-1);
+}
+.calli-book-seam {
+  position: absolute;
+  z-index: 14;
+  width: 30px;
+  pointer-events: none;
+  background: linear-gradient(to right,
+    transparent 0%, rgba(78,53,28,.14) 21%,
+    rgba(48,32,15,.4) 43%, rgba(35,25,17,.51) 50%,
+    rgba(48,32,15,.34) 58%, rgba(92,66,38,.12) 80%, transparent 100%);
+}
+.calli-book-seam::after {
+  content: "";
+  position: absolute;
+  top: 4%;
+  bottom: 4%;
+  left: calc(50% - .5px);
+  width: 1px;
+  background: rgba(55,37,22,.26);
+  box-shadow: 2px 0 3px #f9f1e46e, -2px 0 3px #f9f1e46e;
+}
+.calli-book-spine-closed {
+  position: absolute;
+  z-index: 16;
+  border: 2px solid var(--cover-edge);
+  border-radius: 4px 1px 1px 4px;
+  background: linear-gradient(90deg, var(--cover-deep), var(--cover-light) 54%, var(--cover-base));
+  box-shadow: inset 3px 0 6px #0007, 2px 5px 10px #0005;
+}
+.calli-book-cover-leaf {
+  position: absolute;
+  z-index: 32;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+.calli-book-cover-face {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  color: #f0e2c6;
+  border-radius: 6px 3px 3px 6px;
+  border: 6px solid var(--cover-edge);
+  background:
+    radial-gradient(ellipse at 58% 33%, rgba(255,255,255,.11), transparent 57%),
+    repeating-linear-gradient(92deg, rgba(255,255,255,.024) 0 1px, transparent 1px 4px),
+    linear-gradient(135deg, var(--cover-light), var(--cover-base) 48%, var(--cover-deep));
+  box-shadow:
+    inset 12px 0 18px rgba(0,0,0,.3),
+    inset 0 0 0 2px rgba(218,181,114,.21),
+    inset 0 0 30px rgba(0,0,0,.22),
+    8px 15px 30px rgba(0,0,0,.29);
+}
+.calli-book-cover-face--soft { border-width: 2px; border-radius: 3px 2px 2px 3px; }
+.calli-book-cover-face--back { border-radius: 3px 6px 6px 3px; }
+.calli-book-cover-face::before {
+  content: "";
+  position: absolute;
+  inset: 4.6%;
+  border: 1px solid rgba(222,189,131,.67);
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 5px rgba(6,10,15,.055), 0 0 0 4px rgba(6,10,15,.055);
+  pointer-events: none;
+}
+.calli-book-cover-face::after {
+  content: "";
+  position: absolute;
+  inset: 6.2%;
+  border: 1px solid rgba(223,191,139,.22);
+  pointer-events: none;
+}
+.calli-book-cover-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .36;
+  background-image: radial-gradient(rgba(255,255,255,.18) .55px, transparent .8px);
+  background-size: 4px 5px;
+  mask-image: linear-gradient(115deg, transparent 2%, black 48%, transparent 98%);
+}
+.calli-book-cover-hinge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 7%;
+  background: linear-gradient(to right, rgba(0,0,0,.58), rgba(255,255,255,.075) 48%, transparent);
+  pointer-events: none;
+}
+.calli-book-foil {
+  color: #e2c695;
+  text-shadow: 0 1px 1px rgba(0,0,0,.75), 0 -1px 0 rgba(255,244,210,.1);
+}
+.calli-book-ornament {
+  width: min(45%, 156px);
+  height: auto;
+  opacity: .86;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.55));
+}
+@media (prefers-reduced-motion: reduce) {
+  .calli-book-page { transition: none; }
+  .calli-book-cover-leaf { will-change: auto; }
+}
