@@ -2,15 +2,19 @@
 /* Physical-book presentation. Scoped so notebook and editor styles stay unchanged. */
 .calli-book-viewport {
   width: 100%;
-  overflow-x: auto;
+  min-width: 0;
+  overflow-x: clip;
   overflow-y: visible;
   padding: 12px 0 32px;
-  scrollbar-width: thin;
+}
+.calli-book-fit {
+  position: relative;
+  margin: 0 auto;
 }
 .calli-book-stage {
   position: relative;
   flex: none;
-  margin: 0 auto;
+  margin: 0;
   isolation: isolate;
   perspective: 1900px;
 }
