@@ -174,6 +174,24 @@ export const BookLayout: React.FC = () => {
   const right = left + pageWidth + spineWidth;
   const stageWidth = right + pageWidth + margin;
   const stageHeight = pageHeight + 44;
+  const viewportRef = React.useRef<HTMLDivElement>(null);
+  const [viewportWidth, setViewportWidth] = React.useState(0);
+  React.useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const measureWidth = () => setViewportWidth(viewport.clientWidth);
+    measureWidth();
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(measureWidth);
+      observer.observe(viewport);
+      return () => observer.disconnect();
+    }
+    window.addEventListener('resize', measureWidth);
+    return () => window.removeEventListener('resize', measureWidth);
+  }, []);
+  // Keep the complete two-page book in view at its original size when possible,
+  // then scale the entire physical spread as one unit on narrower screens.
+  const bookScale = viewportWidth > 0 ? Math.min(1, viewportWidth / stageWidth) : 1;
   const title = (activeFileId && items[activeFileId]?.name?.trim()) || 'Untitled Book';
   const tones = ({
     hardcover: ['#324853', '#1c313c', '#101e27', '#192b32'],
@@ -204,8 +222,12 @@ export const BookLayout: React.FC = () => {
         <button type="button" disabled={isBack} onClick={() => setCurrentPageIndex(Math.min(finalSpread + 1, currentPageIndex + 1))}
           className="disabled:opacity-30 px-3 py-1 border border-[var(--border-color)] rounded">Next</button>
       </nav>
-      <div className="calli-book-viewport">
-        <div className="calli-book-stage" style={{width: stageWidth, height: stageHeight, ...coverVars}}>
+      <div className="calli-book-viewport" ref={viewportRef}>
+        <div className="calli-book-fit" style={{width: stageWidth * bookScale, height: stageHeight * bookScale}}>
+          <div className="calli-book-stage" style={{
+            width: stageWidth, height: stageHeight, ...coverVars,
+            transform: `scale(${bookScale})`, transformOrigin: 'top left'
+          }}>
           <div className="calli-book-shadow" aria-hidden="true"/>
           <div className={'calli-book-board ' + (!hardcover ? 'calli-book-board--soft' : '')}
             style={{ ...placement(left - 9, top + 5, pageWidth + 12, pageHeight + 9), opacity: isFront ? 0 : 1 }}
@@ -240,6 +262,7 @@ export const BookLayout: React.FC = () => {
             aria-hidden={!isBack}>
             <BookCoverFace title={title} hardcover={hardcover} back/>
           </motion.div>
+          </div>
         </div>
       </div>
     </div>
