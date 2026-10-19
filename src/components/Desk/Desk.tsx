@@ -15,7 +15,7 @@ export const Desk: React.FC<DeskProps> = ({ isDrawerOpen }) => {
 
   return (
     <motion.main 
-      animate={{ y: isDrawerOpen ? 192 : 0 }}
+      animate={{ y: isDrawerOpen ? 320 : 0 }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
       className="flex-1 flex flex-col items-center p-10 relative overflow-y-auto bg-[var(--bg-desk)] min-h-screen pt-20"
     >
