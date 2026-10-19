@@ -125,11 +125,23 @@ export function useGoogleDrive(accessToken: string | null) {
     return data.files as DriveItem[];
   }, [fetchWithToken]);
 
+  const getFileMetadata = useCallback(async (fileId: string) => {
+    return fetchWithToken(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,name,parents,mimeType`);
+  }, [fetchWithToken]);
+
+  const listFolders = useCallback(async (parentId: string = 'root') => {
+    const query = `'${parentId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+    const data = await fetchWithToken(
+      `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=nextPageToken,files(id,name,mimeType)&pageSize=100&orderBy=name`
+    );
+    return data.files as DriveItem[];
+  }, [fetchWithToken]);
+
   const deleteItem = useCallback(async (fileId: string) => {
     await fetchWithToken(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
       method: 'DELETE',
     });
   }, [fetchWithToken]);
 
-  return { findOrCreateFolder, syncFile, updateItemParent, getFileContent, listItems, deleteItem, isSyncing, setIsSyncing };
+  return { findOrCreateFolder, syncFile, updateItemParent, getFileContent, listItems, listFolders, getFileMetadata, deleteItem, isSyncing, setIsSyncing };
 }
