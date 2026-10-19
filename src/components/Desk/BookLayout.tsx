@@ -30,11 +30,12 @@ const paperOutline = {
   right: 'M 0 38 C 166 -1 349 6 497 37 L 497 709 C 330 699 149 714 0 732 Z',
 };
 
-function BookPaper({ side, children, style, visible }: {
+function BookPaper({ side, children, style, visible, interactive = visible }: {
   side: PaperSide;
   children?: React.ReactNode;
   style: React.CSSProperties;
   visible: boolean;
+  interactive?: boolean;
 }) {
   const uniqueId = React.useId().replace(/:/g, '');
   const paperId = 'calli-paper-' + uniqueId;
@@ -44,8 +45,8 @@ function BookPaper({ side, children, style, visible }: {
   return (
     <div
       className={'calli-book-page calli-book-page--' + side}
-      style={{ ...style, opacity: visible ? 1 : 0, pointerEvents: visible ? 'auto' : 'none' }}
-      aria-hidden={!visible}
+      style={{ ...style, opacity: visible ? 1 : 0, pointerEvents: interactive && visible ? 'auto' : 'none' }}
+      aria-hidden={!interactive || !visible}
     >
       <div className={'calli-book-sheet-stack calli-book-sheet-stack--' + side} aria-hidden="true"/>
       <svg className="calli-book-page-svg" viewBox="0 0 500 750" preserveAspectRatio="none" aria-hidden="true">
@@ -237,11 +238,11 @@ export const BookLayout: React.FC = () => {
             aria-hidden="true"/>
           {/* The pages remain behind the covers throughout the flip, rather than
               fading out to reveal the colored cover boards mid-animation. */}
-          <BookPaper side="left" visible={isInside || isBack} style={placement(left)}>
+          <BookPaper side="left" visible={isInside || isBack} interactive={isInside} style={placement(left)}>
             {active ? <LayoutPage name={active}/> : null}
           </BookPaper>
-          <BookPaper side="right" visible={isInside || isFront} style={placement(right)}>
-            {active ? null : <WritingSurface/>}
+          <BookPaper side="right" visible={isInside || isFront} interactive={isInside} style={placement(right)}>
+            {isInside && !active ? <WritingSurface/> : null}
           </BookPaper>
           <div className="calli-book-seam" style={{ left: left + pageWidth - 8, top: top + 20, height: pageHeight - 39 }} aria-hidden="true"/>
           {(isFront || isBack) && (
