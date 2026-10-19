@@ -59,3 +59,28 @@ export function withBookText(raw: string, key: string, value: string): string {
   const { body, fields } = decode(raw);
   return body + START + JSON.stringify({ ...fields, [key]: value }) + END;
 }
+
+/** Document-specific book format, layout selection and typography preferences. */
+export interface SavedBookSettings {
+  format?: string;
+  selectedLayouts?: string[];
+  fontSizeOverride?: number | null;
+}
+
+export function getBookSettings(raw: string): SavedBookSettings {
+  const value = getBookText(raw, '__bookSettings', '');
+  if (!value) return {};
+  try {
+    const parsed = JSON.parse(value);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return {
+      format: typeof parsed.format === 'string' ? parsed.format : undefined,
+      selectedLayouts: Array.isArray(parsed.selectedLayouts) ? parsed.selectedLayouts.filter((x: unknown) => typeof x === 'string') : undefined,
+      fontSizeOverride: parsed.fontSizeOverride === null || typeof parsed.fontSizeOverride === 'number' ? parsed.fontSizeOverride : undefined,
+    };
+  } catch { return {}; }
+}
+
+export function withBookSettings(raw: string, settings: SavedBookSettings): string {
+  return withBookText(raw, '__bookSettings', JSON.stringify(settings));
+}
