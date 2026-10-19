@@ -151,12 +151,17 @@
   position: absolute;
   z-index: 32;
   transform-style: preserve-3d;
-  backface-visibility: hidden;
+  /* Both faces of the board need to remain renderable through the rotation. */
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
   will-change: transform;
 }
 .calli-book-cover-face {
   position: relative;
   box-sizing: border-box;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(1px);
   overflow: hidden;
   height: 100%;
   width: 100%;
@@ -175,6 +180,39 @@
 }
 .calli-book-cover-face--soft { border-width: 2px; border-radius: 3px 2px 2px 3px; }
 .calli-book-cover-face--back { border-radius: 3px 6px 6px 3px; }
+/* A real cover has a pasted-down ivory endpaper on its inside.
+   Keeping a distinct reverse face prevents the blue outer board from
+   appearing through the cover when it turns past 90 degrees. */
+.calli-book-cover-lining {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  transform: rotateY(180deg) translateZ(1px);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 5px solid #e9dcc5;
+  border-radius: 3px 6px 6px 3px;
+  background:
+    radial-gradient(ellipse at 65% 42%, #fff8e8 0%, #f6ebd6 75%, #d9c6a8 100%);
+  box-shadow:
+    inset 16px 0 19px rgba(88,64,37,.19),
+    inset 0 0 0 1px #cbb899,
+    inset 0 0 28px rgba(95,72,43,.1);
+}
+.calli-book-cover-lining--back {
+  border-radius: 6px 3px 3px 6px;
+  box-shadow:
+    inset -16px 0 19px rgba(88,64,37,.19),
+    inset 0 0 0 1px #cbb899,
+    inset 0 0 28px rgba(95,72,43,.1);
+}
+.calli-book-cover-lining::before {
+  content: "";
+  position: absolute;
+  inset: 5%;
+  border: 1px solid rgba(166,133,89,.16);
+  pointer-events: none;
+}
 .calli-book-cover-face::before {
   content: "";
   position: absolute;
