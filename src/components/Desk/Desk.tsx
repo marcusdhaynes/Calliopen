@@ -17,7 +17,7 @@ export const Desk: React.FC<DeskProps> = ({ isDrawerOpen }) => {
     <motion.main 
       animate={{ y: isDrawerOpen ? 320 : 0 }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="flex-1 flex flex-col items-center p-10 relative overflow-y-auto bg-[var(--bg-desk)] min-h-screen pt-20"
+      className={`flex-1 flex flex-col items-center relative overflow-y-auto bg-[var(--bg-desk)] min-h-screen pt-20 ${format.isBook ? "px-3 md:px-6 xl:px-8 pb-10" : "p-10"}`}
     >
       <div 
         className="absolute inset-0 opacity-20 pointer-events-none" 
@@ -28,7 +28,7 @@ export const Desk: React.FC<DeskProps> = ({ isDrawerOpen }) => {
       />
       
       <div className={`relative z-10 w-full flex justify-center transition-all duration-500 ease-in-out`}>
-        <div className="relative w-full max-w-[900px] flex justify-center">
+        <div className={`relative w-full ${format.isBook ? "max-w-none" : "max-w-[900px]"} flex justify-center min-w-0`}>
           {(format.id === 'notebook' || format.id === 'dual_notebook') ? (
             <div className="absolute bottom-full left-0 right-0 z-20">
               <TextControls />
