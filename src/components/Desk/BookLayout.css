@@ -261,3 +261,48 @@
   .calli-book-page { transition: none; }
   .calli-book-cover-leaf { will-change: auto; }
 }
+
+
+/* Inline editing for printed-page layouts and both covers. */
+.calli-book-editable {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 1.2em;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  outline: none;
+  resize: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: inherit;
+  letter-spacing: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  caret-color: currentColor;
+  box-shadow: none;
+}
+.calli-book-editable--fill {
+  height: 100%;
+  max-height: 100%;
+}
+.calli-book-editable::placeholder {
+  color: currentColor;
+  opacity: .33;
+}
+.calli-book-editable:focus-visible {
+  outline: 1px solid rgba(160,126,85,.38);
+  outline-offset: 3px;
+}
+.calli-book-cover-face .calli-book-editable:focus-visible {
+  outline-color: rgba(229,196,137,.65);
+}
+.calli-book-editable[readonly] {
+  cursor: default;
+}
