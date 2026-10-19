@@ -72,9 +72,9 @@ export const DrawerPanel: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       aria-hidden={!isOpen}
       className="fixed top-8 left-0 right-0 h-80 bg-[var(--bg-header)] border-b border-[var(--border-color)] shadow-[0_10px_30px_rgba(0,0,0,0.05)] px-5 md:px-10 py-5 z-[40] overflow-y-auto">
-      <div className="max-w-6xl mx-auto grid grid-cols-3 gap-4 md:gap-10">
+      <div className="max-w-4xl mx-auto grid grid-cols-3 gap-4 md:gap-10 justify-items-center">
         {LAYOUT_GROUPS.map(([heading, layouts]) => (
-          <section key={heading} className="min-w-0">
+          <section key={heading} className="min-w-0 w-full max-w-[220px]">
             <h3 className="text-[10px] uppercase tracking-widest font-bold text-[var(--text-muted)] mb-3 sticky top-0 bg-[var(--bg-header)] py-1">{heading}</h3>
             <div className="flex flex-col gap-2">
               {layouts.map(name => (
