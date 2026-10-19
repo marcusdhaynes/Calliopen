@@ -12,8 +12,8 @@ interface Props {
 export const BookSaveSettings: React.FC<Props> = ({ accessToken, user, onLogin }) => {
   const { items, setItems, activeFileId, preferredDriveFolder, setPreferredDriveFolder } = useFileStore();
   const { listFolders, getFileMetadata, updateItemParent, syncFile } = useGoogleDrive(accessToken || null);
-  const [folder, setFolder] = React.useState<{ id: string; name: string }>({ id: 'root', name: 'My Drive' });
-  const [history, setHistory] = React.useState<{ id: string; name: string }[]>([]);
+  const [folder, setFolder] = React.useState<{ id: string; name: string }>(preferredDriveFolder || { id: 'root', name: 'My Drive' });
+  const [history, setHistory] = React.useState<{ id: string; name: string }[]>(preferredDriveFolder ? [{ id: 'root', name: 'My Drive' }] : []);
   const [folders, setFolders] = React.useState<DriveItem[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
