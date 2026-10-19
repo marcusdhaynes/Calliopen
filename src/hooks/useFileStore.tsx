@@ -34,15 +34,15 @@ export const FileStoreProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [rootIds, setRootIds] = useState<string[]>(initialRootIds);
   const [activeFileId, setActiveFileId] = useState<string | null>('file1');
   const [preferredDriveFolder, setPreferredDriveFolderState] = useState<{ id: string; name: string } | null>(null);
-  const [profileReady, setProfileReady] = useState(false);
-  const profileKey = user ? 'calliopen:profile:' + user.uid : null;
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  const profileKey = user ? 'calliopen:profile:' + user.uid : 'calliopen:guest';
+  const profileReady = !loading && loadedKey === profileKey;
 
   // Each signed-in identity has a separate local workspace. Guest drafts are
   // retained separately, never silently merged into somebody else's profile.
   useEffect(() => {
     if (loading) return;
-    setProfileReady(false);
-    const storageKey = profileKey || 'calliopen:guest';
+    const storageKey = profileKey;
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
       if (saved && saved.items && Array.isArray(saved.rootIds)) {
@@ -62,13 +62,13 @@ export const FileStoreProvider: React.FC<{ children: ReactNode }> = ({ children 
       setActiveFileId('file1');
       setPreferredDriveFolderState(null);
     }
-    setProfileReady(true);
+    setLoadedKey(storageKey);
   }, [profileKey, loading]);
 
   useEffect(() => {
     if (!profileReady || loading) return;
     try {
-      localStorage.setItem(profileKey || 'calliopen:guest',
+      localStorage.setItem(profileKey,
         JSON.stringify({items, rootIds, activeFileId, preferredDriveFolder}));
     } catch (error) {
       console.error('Local autosave failed', error);
