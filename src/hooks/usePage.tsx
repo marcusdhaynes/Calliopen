@@ -3,6 +3,8 @@ import { PageFormatType, PAGE_FORMATS, PageFormat } from '../lib/formats';
 
 interface PageContextType {
   format: PageFormat;
+  selectedLayouts: string[];
+  toggleLayout: (name: string) => void;
   setFormat: (type: PageFormatType) => void;
   content: string;
   setContent: (content: string) => void;
@@ -17,6 +19,8 @@ interface PageContextType {
 const PageContext = createContext<PageContextType | undefined>(undefined);
 
 export const PageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [selectedLayouts, setSelectedLayouts] = useState<string[]>([]);
+  const toggleLayout = (name: string) => setSelectedLayouts(prev => prev.includes(name) ? prev.filter(x => x !== name) : [...prev, name]);
   const [formatType, setFormatType] = useState<PageFormatType>('notebook');
   const [content, setContent] = useState('');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
@@ -32,7 +36,9 @@ export const PageProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return (
     <PageContext.Provider value={{ 
-      format, 
+      format,
+      selectedLayouts,
+      toggleLayout,
       setFormat, 
       content, 
       setContent,
