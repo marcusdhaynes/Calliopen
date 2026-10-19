@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { User, Mail, Shield, Circle, Files, Settings, Activity } from 'lucide-react';
 import { AccountSidebar } from './AccountSidebar';
 import { FileManager } from './FileManager';
+import { BookSaveSettings } from './BookSaveSettings';
 import { useFileStore } from '../../hooks/useFileStore';
 
 interface BackendProps {
@@ -85,6 +86,10 @@ export const Backend: React.FC<BackendProps> = ({ isOpen, onClose, user, accessT
                     setRootIds={setRootIds}
                     onLogin={onLogin}
                   />
+                </motion.div>
+              ) : activeTab === 'config' ? (
+                <motion.div key="config" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full">
+                  <BookSaveSettings accessToken={accessToken} user={user} onLogin={onLogin}/>
                 </motion.div>
               ) : (
                 <motion.div
