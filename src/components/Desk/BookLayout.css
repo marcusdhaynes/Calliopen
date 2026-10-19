@@ -306,3 +306,23 @@
 .calli-book-editable[readonly] {
   cursor: default;
 }
+
+/* Common heading baseline and rule for all top-left book layouts.
+   The rule stays anchored beneath the editable heading even when it wraps. */
+.calli-book-layout-heading {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 100%;
+  margin: 0;
+  padding: 0 0 12px;
+  border-bottom: 1px solid rgba(117, 93, 65, .46);
+}
+.calli-book-layout-heading .calli-book-editable {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  line-height: 1.2;
+}
