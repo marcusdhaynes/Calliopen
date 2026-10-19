@@ -235,10 +235,12 @@ export const BookLayout: React.FC = () => {
           <div className={'calli-book-board ' + (!hardcover ? 'calli-book-board--soft' : '')}
             style={{ ...placement(right - 3, top + 5, pageWidth + 12, pageHeight + 9), opacity: isBack ? 0 : 1 }}
             aria-hidden="true"/>
-          <BookPaper side="left" visible={isInside} style={placement(left)}>
+          {/* The pages remain behind the covers throughout the flip, rather than
+              fading out to reveal the colored cover boards mid-animation. */}
+          <BookPaper side="left" visible={isInside || isBack} style={placement(left)}>
             {active ? <LayoutPage name={active}/> : null}
           </BookPaper>
-          <BookPaper side="right" visible={isInside} style={placement(right)}>
+          <BookPaper side="right" visible={isInside || isFront} style={placement(right)}>
             {active ? null : <WritingSurface/>}
           </BookPaper>
           <div className="calli-book-seam" style={{ left: left + pageWidth - 8, top: top + 20, height: pageHeight - 39 }} aria-hidden="true"/>
@@ -249,18 +251,20 @@ export const BookLayout: React.FC = () => {
           <motion.div className="calli-book-cover-leaf"
             initial={false}
             animate={{rotateY: isFront ? 0 : -179, opacity: isFront ? 1 : 0}}
-            transition={{rotateY:{duration:.8,ease:[.22,.61,.36,1]},opacity:{duration:.12,delay:isFront?0:.67}}}
+            transition={{rotateY:{duration:.8,ease:[.22,.61,.36,1]},opacity:{duration:0,delay:isFront?0:.8}}}
             style={{...placement(right, top + 1, pageWidth, pageHeight + 4), transformOrigin:'left center'}}
             aria-hidden={!isFront}>
             <BookCoverFace title={title} hardcover={hardcover} back={false}/>
+            <div className="calli-book-cover-lining" aria-hidden="true"/>
           </motion.div>
           <motion.div className="calli-book-cover-leaf"
             initial={false}
             animate={{rotateY: isBack ? 0 : 179, opacity: isBack ? 1 : 0}}
-            transition={{rotateY:{duration:.8,ease:[.22,.61,.36,1]},opacity:{duration:.12,delay:isBack?0:.67}}}
+            transition={{rotateY:{duration:.8,ease:[.22,.61,.36,1]},opacity:{duration:0,delay:isBack?0:.8}}}
             style={{...placement(left, top + 1, pageWidth, pageHeight + 4), transformOrigin:'right center'}}
             aria-hidden={!isBack}>
             <BookCoverFace title={title} hardcover={hardcover} back/>
+            <div className="calli-book-cover-lining calli-book-cover-lining--back" aria-hidden="true"/>
           </motion.div>
           </div>
         </div>
