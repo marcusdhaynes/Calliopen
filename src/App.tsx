@@ -10,6 +10,7 @@ import { useTheme } from './hooks/useTheme';
 import { PageProvider } from './hooks/usePage';
 import { FileStoreProvider } from './hooks/useFileStore';
 import { useDriveSync } from './hooks/useDriveSync';
+import { UpdateBanner } from './updates/UpdateBanner';
 
 function AppContent() {
   const { theme, toggleTheme } = useTheme();
@@ -31,7 +32,7 @@ function AppContent() {
           onCloseBackend={() => setIsBackendOpen(false)}
           isBackendOpen={isBackendOpen}
         />
-        
+        <UpdateBanner />
         <Desk isDrawerOpen={isDrawerOpen} />
         
         <DrawerPanel isOpen={isDrawerOpen} />

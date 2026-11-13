@@ -2,6 +2,7 @@ import React from 'react';
 import { Folder, ArrowLeft, RefreshCw, MoveRight, Cloud, HardDrive } from 'lucide-react';
 import { useFileStore } from '../../hooks/useFileStore';
 import { useGoogleDrive, DriveItem } from '../../hooks/useGoogleDrive';
+import { UpdatesSection } from '../../updates/UpdatesSection';
 
 interface Props {
   accessToken?: string | null;
@@ -133,6 +134,7 @@ export const BookSaveSettings: React.FC<Props> = ({ accessToken, user, onLogin }
       )}
       {status && <p role="status" className="text-sm text-green-700 dark:text-green-400 mt-4">{status}</p>}
       {error && <p role="alert" className="text-sm text-red-700 dark:text-red-400 mt-4">{error}</p>}
+      <UpdatesSection />
     </div>
   );
 };
